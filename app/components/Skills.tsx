@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { useLanguage } from "../lib/i18n";
 import { TOOLS } from "../lib/content";
 import SectionHead from "./SectionHead";
+import ToolLogo from "./ToolLogo";
 
 export default function Skills() {
   const { t, lang } = useLanguage();
@@ -21,7 +22,7 @@ export default function Skills() {
               }
             >
               <span className="num">{String(i + 1).padStart(2, "0")}</span>
-              <div className="ico">{tool.abbr}</div>
+              <div className="ico"><ToolLogo name={tool.name} abbr={tool.abbr} /></div>
               <h4>{tool.name}</h4>
               <div className="role">{lang === "fr" ? tool.roleFr : tool.roleEn}</div>
               <div className="bar">
