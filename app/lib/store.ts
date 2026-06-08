@@ -56,7 +56,9 @@ const clone = (s: State): State =>
     ? structuredClone(s)
     : JSON.parse(JSON.stringify(s));
 
-let state: State = load();
+// Always start with DEFAULTS so the first client render matches the server HTML.
+// useStore's useEffect replaces this with the real localStorage data after hydration.
+let state: State = clone(DEFAULTS);
 const listeners = new Set<() => void>();
 
 function load(): State {

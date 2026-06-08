@@ -39,7 +39,7 @@ export const CONTENT: Record<Lang, Content> = {
     nav: { about: "À propos", skills: "Compétences", work: "Projets", services: "Services", contact: "Contact", cta: "Travaillons ensemble" },
     hero: {
       tags: ["Designer Graphique", "Monteur Vidéo", "Antananarivo · MG"],
-      name1: "SOLOFONIRINA",
+      name1: "RAZAFINDRAVONJY SOLOFONIRINA",
       name2: "ELYSÉ",
       sub: "Designer graphique et monteur vidéo. Je transforme les idées en identités visuelles fortes — affiches, logos et contenus qui captent le regard.",
       primary: "Voir mes projets",
