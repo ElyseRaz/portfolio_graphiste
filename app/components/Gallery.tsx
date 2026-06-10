@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
 import { Store, useStore, type Design } from "../lib/store";
 
@@ -190,8 +191,14 @@ export default function Gallery() {
               >
                 <div className="gcard-img">
                   {d.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={d.image} alt={d.title} loading="lazy" />
+                    <Image
+                      src={d.image}
+                      alt={d.title}
+                      fill
+                      sizes="(max-width: 480px) 100vw, (max-width: 980px) 50vw, 33vw"
+                      style={{ objectFit: "cover" }}
+                      loading="lazy"
+                    />
                   ) : (
                     <div className="gcard-noimg">{lang === "fr" ? "Sans image" : "No image"}</div>
                   )}

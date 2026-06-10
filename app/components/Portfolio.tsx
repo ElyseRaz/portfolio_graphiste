@@ -1,16 +1,18 @@
 "use client";
 
 import { useCallback } from "react";
+import dynamic from "next/dynamic";
 import { useReveal } from "../lib/useReveal";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
-import Marquee from "./Marquee";
-import About from "./About";
-import Skills from "./Skills";
-import Gallery from "./Gallery";
-import Services from "./Services";
-import Contact from "./Contact";
-import Footer from "./Footer";
+
+const Marquee = dynamic(() => import("./Marquee"));
+const About = dynamic(() => import("./About"));
+const Skills = dynamic(() => import("./Skills"));
+const Gallery = dynamic(() => import("./Gallery"));
+const Services = dynamic(() => import("./Services"));
+const Contact = dynamic(() => import("./Contact"));
+const Footer = dynamic(() => import("./Footer"));
 
 export default function Portfolio() {
   useReveal();

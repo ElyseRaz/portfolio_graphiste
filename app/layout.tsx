@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Oswald, JetBrains_Mono } from "next/font/google";
+import { Bebas_Neue, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { LanguageProvider } from "./lib/i18n";
@@ -9,13 +9,6 @@ const bebas = Bebas_Neue({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-bebas",
-  display: "swap",
-});
-
-const oswald = Oswald({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-oswald",
   display: "swap",
 });
 
@@ -53,8 +46,11 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${bebas.variable} ${oswald.variable} ${jetbrains.variable} ${aileron.variable}`}
+      className={`${bebas.variable} ${jetbrains.variable} ${aileron.variable}`}
     >
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+      </head>
       <body>
         <ThemeProvider>
           <LanguageProvider>{children}</LanguageProvider>
