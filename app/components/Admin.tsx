@@ -355,6 +355,88 @@ function DesignPanel() {
   );
 }
 
+function MigratePanel() {
+  const { lang } = useLanguage();
+  const [designs, setDesigns] = useState<unknown[]>([]);
+  const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
+  const [result, setResult] = useState({ ok: 0, failed: 0 });
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("port_gallery_v1");
+      const parsed = JSON.parse(raw || "{}");
+      const cats: Array<{ id: string; name: string }> = parsed.categories || [];
+      const list: Array<Record<string, string>> = (parsed.designs || []).filter(
+        (d: Record<string, string>) => d.image?.includes("res.cloudinary.com")
+      );
+      // Enrichir avec le nom de catégorie stocké localement
+      const enriched = list.map((d) => ({
+        ...d,
+        categoryName: cats.find((c) => c.id === d.categoryId)?.name || "",
+      }));
+      setDesigns(enriched);
+    } catch { /* ignore */ }
+  }, []);
+
+  if (designs.length === 0) return null;
+
+  const run = async () => {
+    setStatus("running");
+    try {
+      const res = await fetch("/api/designs/migrate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(designs),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setResult(data);
+      await Store.refreshDesigns();
+      // Nettoyer les designs de localStorage — migration terminée
+      const raw = localStorage.getItem("port_gallery_v1");
+      const parsed = JSON.parse(raw || "{}");
+      localStorage.setItem("port_gallery_v1", JSON.stringify({ categories: parsed.categories || [] }));
+      setDesigns([]);
+      setStatus("done");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="admin-panel migrate-panel">
+      <div className="admin-panel-head">
+        <h3>{lang === "fr" ? "Migration Cloudinary" : "Cloudinary Migration"}</h3>
+        <span className="ap-count">{designs.length}</span>
+      </div>
+      <p className="migrate-desc">
+        {lang === "fr"
+          ? `${designs.length} design(s) trouvé(s) dans votre navigateur. Cliquez pour attacher leurs métadonnées sur Cloudinary — les images ne seront pas re-uploadées.`
+          : `${designs.length} design(s) found in your browser. Click to attach their metadata on Cloudinary — images will not be re-uploaded.`}
+      </p>
+      {status === "idle" && (
+        <button type="button" className="btn btn-primary" onClick={run}>
+          {lang === "fr" ? `Migrer ${designs.length} designs →` : `Migrate ${designs.length} designs →`}
+        </button>
+      )}
+      {status === "running" && (
+        <p className="migrate-running">
+          {lang === "fr" ? "Migration en cours…" : "Migrating…"}
+        </p>
+      )}
+      {status === "done" && (
+        <p className="migrate-done">
+          ✓ {result.ok} {lang === "fr" ? "migré(s)" : "migrated"}
+          {result.failed > 0 ? ` · ${result.failed} ${lang === "fr" ? "échoué(s)" : "failed"}` : ""}
+        </p>
+      )}
+      {status === "error" && (
+        <p className="df-err">{lang === "fr" ? "Erreur — réessayez." : "Error — try again."}</p>
+      )}
+    </div>
+  );
+}
+
 export default function Admin() {
   const { lang, setLang } = useLanguage();
   const [authed, setAuthed] = useState(false);
@@ -426,6 +508,7 @@ export default function Admin() {
               : "Create categories, add your work with an image, and everything appears instantly on your portfolio."}
           </p>
         </div>
+        <MigratePanel />
         <div className="admin-grid">
           <CategoryPanel />
           <DesignPanel />
