@@ -35,7 +35,7 @@ const aileron = localFont({
 export const metadata: Metadata = {
   title: "RAZAFINDRAVONJY Solofonirina Elysé — Portfolio",
   description:
-    "Portfolio de RAZAFINDRAVONJY Solofonirina Elysé — designer graphique et monteur vidéo basé à Antananarivo. Affiches, identités visuelles, logos, réseaux sociaux et montage vidéo.",
+    "Portfolio de RAZAFINDRAVONJY Solofonirina Elysé — designer graphique et monteur vidéo basé à Fianarantsoa. Affiches, identités visuelles, logos, réseaux sociaux et montage vidéo.",
 };
 
 export default function RootLayout({

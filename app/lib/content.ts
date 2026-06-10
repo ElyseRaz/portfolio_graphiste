@@ -38,7 +38,7 @@ export const CONTENT: Record<Lang, Content> = {
   fr: {
     nav: { about: "À propos", skills: "Compétences", work: "Projets", services: "Services", contact: "Contact", cta: "Travaillons ensemble" },
     hero: {
-      tags: ["Designer Graphique", "Monteur Vidéo", "Antananarivo · MG"],
+      tags: ["Designer Graphique", "Monteur Vidéo", "Fianarantsoa · MG"],
       name1: "RAZAFINDRAVONJY SOLOFONIRINA",
       name2: "ELYSÉ",
       sub: "Designer graphique et monteur vidéo. Je transforme les idées en identités visuelles fortes — affiches, logos et contenus qui captent le regard.",
@@ -87,7 +87,7 @@ export const CONTENT: Record<Lang, Content> = {
       index: "05 — Contact",
       lead: ["Créons", "ensemble"],
       sub: "Un projet en tête ? Parlons-en. Je réponds généralement sous 24 h.",
-      emailK: "Email", phoneK: "Téléphone", locK: "Lieu", loc: "Antananarivo, Madagascar",
+      emailK: "Email", phoneK: "Téléphone", locK: "Lieu", loc: "Fianarantsoa, Madagascar",
       socialsLabel: "Réseaux",
       form: {
         nameL: "Votre nom", nameP: "Jean Rakoto",
@@ -109,7 +109,7 @@ export const CONTENT: Record<Lang, Content> = {
   en: {
     nav: { about: "About", skills: "Skills", work: "Work", services: "Services", contact: "Contact", cta: "Let's work together" },
     hero: {
-      tags: ["Graphic Designer", "Video Editor", "Antananarivo · MG"],
+      tags: ["Graphic Designer", "Video Editor", "Fianarantsoa · MG"],
       name1: "SOLOFONIRINA",
       name2: "ELYSÉ",
       sub: "Graphic designer and video editor. I turn ideas into strong visual identities — posters, logos and content that grab attention.",
@@ -158,7 +158,7 @@ export const CONTENT: Record<Lang, Content> = {
       index: "05 — Contact",
       lead: ["Let's create", "together"],
       sub: "Got a project in mind? Let's talk. I usually reply within 24 hours.",
-      emailK: "Email", phoneK: "Phone", locK: "Location", loc: "Antananarivo, Madagascar",
+      emailK: "Email", phoneK: "Phone", locK: "Location", loc: "Fianarantsoa, Madagascar",
       socialsLabel: "Socials",
       form: {
         nameL: "Your name", nameP: "John Doe",
@@ -205,10 +205,9 @@ export const SERVICES: Service[] = [
 export interface Social { label: string; short: string; href: string }
 
 export const SOCIALS: Social[] = [
-  { label: "Instagram", short: "IG", href: "#" },
-  { label: "Behance", short: "Be", href: "#" },
-  { label: "Facebook", short: "Fb", href: "#" },
-  { label: "LinkedIn", short: "In", href: "#" },
+  { label: "LinkedIn",  short: "In", href: "https://linkedin.com/in/elyse-razafindravonjy-9355b32b5/" },
+  { label: "GitHub",    short: "Gh", href: "https://github.com/ElyseRaz" },
+  { label: "WhatsApp",  short: "WA", href: "https://wa.me/261346571348" },
 ];
 
 export const CONTACT_EMAIL = "erazafindravonjy@gmail.com";

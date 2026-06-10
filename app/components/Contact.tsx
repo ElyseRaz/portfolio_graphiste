@@ -71,7 +71,7 @@ export default function Contact() {
             </div>
             <div className="socials reveal" style={{ "--d": "320ms" } as CSSProperties}>
               {SOCIALS.map((s) => (
-                <a key={s.label} href={s.href} title={s.label} aria-label={s.label}>
+                <a key={s.label} href={s.href} title={s.label} aria-label={s.label} target="_blank" rel="noopener noreferrer">
                   <SocialLogo label={s.label} />
                 </a>
               ))}
