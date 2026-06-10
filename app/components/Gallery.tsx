@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { useLanguage } from "../lib/i18n";
 import { Store, useStore, type Design } from "../lib/store";
 
@@ -35,7 +36,9 @@ function Lightbox({
   const d = items[index];
   if (!d) return null;
 
-  return (
+  // Portal : rendu directement sur document.body, hors du contexte z-index de <main>
+  // Permet au lightbox (z-index 120) de passer au-dessus de la navbar (z-index 50)
+  return createPortal(
     <div className="lb-back open" onClick={onClose}>
       <button type="button" className="lb-close" onClick={onClose}>
         ✕ {lang === "fr" ? "Fermer" : "Close"}
@@ -85,7 +88,8 @@ function Lightbox({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

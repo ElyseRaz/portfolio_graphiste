@@ -66,6 +66,7 @@ html.light {
 }
 html.light .grain { opacity: 0.025; }
 html.light .atmosphere::before { opacity: 0.45; }
+html.light .lb-back { background: rgba(15, 15, 25, 0.78); }
 
 /* ============================================================
    RESET / BASE
