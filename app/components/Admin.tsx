@@ -143,6 +143,37 @@ function CategoryPanel() {
   );
 }
 
+function compressImage(file: File, maxDim = 1500, quality = 0.85): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (Math.max(width, height) > maxDim) {
+          const s = maxDim / Math.max(width, height);
+          width = Math.round(width * s);
+          height = Math.round(height * s);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+        const mime = file.type === "image/png" ? "image/png" : "image/jpeg";
+        canvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("compress-failed"))),
+          mime,
+          quality
+        );
+      };
+      img.onerror = reject;
+      img.src = reader.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 function DesignPanel() {
   const { lang } = useLanguage();
   const store = useStore();
@@ -177,8 +208,9 @@ function DesignPanel() {
     setBusy(true);
     setErr("");
     try {
+      const blob = await compressImage(file);
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", blob, file.name);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       if (!res.ok) throw new Error("upload");
       const { url } = await res.json();
@@ -195,8 +227,8 @@ function DesignPanel() {
     } catch {
       setErr(
         lang === "fr"
-          ? "Erreur d'upload. Vérifiez votre connexion."
-          : "Upload error. Check your connection."
+          ? "Erreur d'upload. Vérifiez votre connexion et le format du fichier."
+          : "Upload error. Check your connection and file format."
       );
     }
     setBusy(false);

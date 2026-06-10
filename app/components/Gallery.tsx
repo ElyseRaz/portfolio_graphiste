@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useLanguage } from "../lib/i18n";
 import { Store, useStore, type Design } from "../lib/store";
 
@@ -93,29 +93,40 @@ export default function Gallery() {
   const { t, lang } = useLanguage();
   const store = useStore();
   const [activeCat, setActiveCat] = useState("all");
-  const [lbIndex, setLbIndex] = useState<number | null>(null);
+  // Stocker l'ID du design ouvert (pas l'index) — stable même si filtered change
+  const [lbId, setLbId] = useState<string | null>(null);
 
   const cats = store.getCategories();
   const designs = store.getDesigns();
+
+  const filtered = activeCat === "all" ? designs : designs.filter((d) => d.categoryId === activeCat);
+  const filteredRef = useRef(filtered);
+  filteredRef.current = filtered;
 
   // keep activeCat valid if a category is deleted
   useEffect(() => {
     if (activeCat !== "all" && !cats.some((c) => c.id === activeCat)) setActiveCat("all");
   }, [cats, activeCat]);
 
-  const filtered = activeCat === "all" ? designs : designs.filter((d) => d.categoryId === activeCat);
+  // Calculer l'index depuis l'ID — toujours correct même après re-render du store
+  const lbIndexRaw = lbId != null ? filtered.findIndex((d) => d.id === lbId) : -1;
+  const lbIndex: number | null = lbIndexRaw >= 0 ? lbIndexRaw : null;
+
   const countFor = (id: string) =>
     id === "all" ? designs.length : designs.filter((d) => d.categoryId === id).length;
 
-  const nav = useCallback(
-    (dir: number) => {
-      setLbIndex((i) => {
-        if (i == null) return i;
-        return (i + dir + filtered.length) % filtered.length;
-      });
-    },
-    [filtered.length],
-  );
+  // Stables — ne changent jamais, utilisent filteredRef pour toujours lire le tableau à jour
+  const closeLb = useCallback(() => setLbId(null), []);
+  const navLb = useCallback((dir: number) => {
+    const f = filteredRef.current;
+    if (!f.length) return;
+    setLbId((prev) => {
+      if (!prev) return null;
+      const idx = f.findIndex((d) => d.id === prev);
+      if (idx < 0) return null;
+      return f[(idx + dir + f.length) % f.length].id;
+    });
+  }, []);
 
   return (
     <section className="block" id="work">
@@ -171,7 +182,7 @@ export default function Gallery() {
                 className="gcard reveal"
                 key={d.id}
                 style={{ "--d": (i % 6) * 60 + "ms" } as CSSProperties}
-                onClick={() => setLbIndex(i)}
+                onClick={() => setLbId(d.id)}
               >
                 <div className="gcard-img">
                   {d.image ? (
@@ -195,7 +206,7 @@ export default function Gallery() {
         )}
       </div>
 
-      <Lightbox items={filtered} index={lbIndex} onClose={() => setLbIndex(null)} onNav={nav} />
+      <Lightbox items={filtered} index={lbIndex} onClose={closeLb} onNav={navLb} />
     </section>
   );
 }
