@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
@@ -104,8 +104,16 @@ export default function Gallery() {
   // Stocker l'ID du design ouvert (pas l'index) — stable même si filtered change
   const [lbId, setLbId] = useState<string | null>(null);
 
-  const cats = store.getCategories();
   const designs = store.getDesigns();
+
+  // Catégories dérivées des designs Cloudinary — visibles sur tous les appareils
+  const cats = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const d of designs) {
+      if (d.categoryId && d.categoryName) seen.set(d.categoryId, d.categoryName);
+    }
+    return Array.from(seen, ([id, name]) => ({ id, name }));
+  }, [designs]);
 
   const filtered = activeCat === "all" ? designs : designs.filter((d) => d.categoryId === activeCat);
 

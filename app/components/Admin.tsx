@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "../lib/i18n";
-import { useStore } from "../lib/store";
+import { Store, useStore } from "../lib/store";
 
 function Login({ onOk }: { onOk: () => void }) {
   const { lang } = useLanguage();
@@ -124,11 +124,9 @@ function CategoryPanel() {
               onClick={() => {
                 if (
                   confirm(
-                    (lang === "fr" ? "Supprimer la catégorie « " : "Delete category “") +
-                      c.name +
-                      (lang === "fr"
-                        ? " » ? Les designs liés deviendront sans catégorie."
-                        : "”? Linked designs become uncategorised."),
+                    lang === "fr"
+                      ? `Supprimer la catégorie « ${c.name} » ? Les designs liés deviendront sans catégorie.`
+                      : `Delete category "${c.name}"? Linked designs become uncategorised.`
                   )
                 )
                   store.deleteCategory(c.id);
@@ -209,16 +207,18 @@ function DesignPanel() {
     setErr("");
     try {
       const blob = await compressImage(file);
+      const catId = form.categoryId || cats[0]?.id || "";
+      const catName = cats.find((c) => c.id === catId)?.name || "";
       const fd = new FormData();
       fd.append("file", blob, file.name);
+      fd.append("title", form.title.trim());
+      fd.append("desc", form.desc.trim());
+      fd.append("year", form.year.trim());
+      fd.append("cat_id", catId);
+      fd.append("cat_name", catName);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       if (!res.ok) throw new Error("upload");
-      const { url } = await res.json();
-      store.addDesign({
-        ...form,
-        categoryId: form.categoryId || cats[0]?.id || null,
-        image: url,
-      });
+      await Store.refreshDesigns();
       setForm({ title: "", categoryId: "", year: "", desc: "" });
       setFile(null);
       URL.revokeObjectURL(previewUrl);
@@ -335,15 +335,15 @@ function DesignPanel() {
             <button
               type="button"
               className="del"
-              onClick={() => {
+              onClick={async () => {
                 if (
                   confirm(
-                    (lang === "fr" ? "Supprimer « " : "Delete “") +
-                      d.title +
-                      (lang === "fr" ? " » ?" : "”?"),
+                    lang === "fr"
+                      ? `Supprimer « ${d.title} » ?`
+                      : `Delete "${d.title}"?`
                   )
                 )
-                  store.deleteDesign(d.id);
+                  await store.deleteDesign(d.id);
               }}
             >
               ✕

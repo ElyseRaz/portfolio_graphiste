@@ -8,8 +8,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo
+const MAX_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+
+// Cloudinary context uses | and = as separators — remove them from values
+const safe = (s: string) => s.replace(/[|=]/g, " ").trim();
 
 export async function POST(req: NextRequest) {
   const authed = await verifySession();
@@ -31,14 +34,18 @@ export async function POST(req: NextRequest) {
   if (!file) {
     return NextResponse.json({ error: "Aucun fichier reçu" }, { status: 400 });
   }
-
   if (file.size > MAX_SIZE) {
     return NextResponse.json({ error: "Fichier trop volumineux (max 10 Mo)" }, { status: 400 });
   }
-
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json({ error: "Format non autorisé (JPEG, PNG, WebP, GIF, AVIF)" }, { status: 400 });
   }
+
+  const title    = safe((form.get("title")    as string | null) || "");
+  const desc     = safe((form.get("desc")     as string | null) || "");
+  const year     = safe((form.get("year")     as string | null) || "");
+  const cat_id   = safe((form.get("cat_id")   as string | null) || "");
+  const cat_name = safe((form.get("cat_name") as string | null) || "");
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
@@ -50,12 +57,13 @@ export async function POST(req: NextRequest) {
           folder: "portfolio",
           resource_type: "image",
           transformation: [{ width: 1500, height: 1500, crop: "limit", quality: "auto:good" }],
+          context: { title, desc, year, cat_id, cat_name },
         },
         (error, result) => {
           if (error || !result) {
             resolve(NextResponse.json({ error: "Échec de l'upload" }, { status: 500 }));
           } else {
-            resolve(NextResponse.json({ url: result.secure_url }));
+            resolve(NextResponse.json({ url: result.secure_url, public_id: result.public_id }));
           }
         }
       )
