@@ -2,10 +2,8 @@
 
 /* ============================================================
    store.ts — client-side data layer for the portfolio gallery.
-   Persists categories + designs to localStorage. Images are
-   downscaled to dataURLs so they survive reloads.
-   NOTE: front-end prototype. The admin passcode is a light gate,
-   not real security.
+   Persists categories + designs to localStorage.
+   Auth is handled server-side via httpOnly cookies (/api/auth/*).
    ============================================================ */
 import { useEffect, useState } from "react";
 
@@ -29,8 +27,6 @@ interface State {
 }
 
 const KEY = "port_gallery_v1";
-const ADMIN_KEY = "port_admin_authed";
-const ADMIN_CODE = "elys2026";
 
 const DEFAULTS: State = {
   categories: [
@@ -187,20 +183,6 @@ export const Store = {
   },
 
   resizeImage,
-
-  /* ---- auth (session) ---- */
-  isAuthed: () =>
-    typeof window !== "undefined" && sessionStorage.getItem(ADMIN_KEY) === "1",
-  login(code: string) {
-    if (code === ADMIN_CODE) {
-      sessionStorage.setItem(ADMIN_KEY, "1");
-      return true;
-    }
-    return false;
-  },
-  logout() {
-    sessionStorage.removeItem(ADMIN_KEY);
-  },
 
   reset() {
     state = clone(DEFAULTS);

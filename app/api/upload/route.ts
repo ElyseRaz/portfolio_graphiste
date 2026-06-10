@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
+import { verifySession } from "../../lib/session";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -11,6 +12,11 @@ const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
 
 export async function POST(req: NextRequest) {
+  const authed = await verifySession();
+  if (!authed) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
   if (
     !process.env.CLOUDINARY_CLOUD_NAME ||
     !process.env.CLOUDINARY_API_KEY ||

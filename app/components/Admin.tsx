@@ -3,20 +3,34 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "../lib/i18n";
-import { Store, useStore } from "../lib/store";
+import { useStore } from "../lib/store";
 
 function Login({ onOk }: { onOk: () => void }) {
   const { lang } = useLanguage();
   const [code, setCode] = useState("");
   const [err, setErr] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (Store.login(code)) onOk();
-    else {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (res.ok) {
+        onOk();
+      } else {
+        setErr(true);
+        setCode("");
+      }
+    } catch {
       setErr(true);
       setCode("");
     }
+    setBusy(false);
   };
 
   return (
@@ -47,8 +61,11 @@ function Login({ onOk }: { onOk: () => void }) {
             type="submit"
             className="btn btn-primary"
             style={{ width: "100%", justifyContent: "center" }}
+            disabled={busy}
           >
-            {lang === "fr" ? "Se connecter" : "Sign in"} →
+            {busy
+              ? lang === "fr" ? "Connexion…" : "Signing in…"
+              : (lang === "fr" ? "Se connecter" : "Sign in") + " →"}
           </button>
         </form>
         <Link className="admin-back" href="/">
@@ -311,10 +328,12 @@ export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [ready, setReady] = useState(false);
 
-  // auth lives in sessionStorage — read it after mount to avoid SSR mismatch
+  // Vérifie la session côté serveur (cookie httpOnly) après le montage
   useEffect(() => {
-    setAuthed(Store.isAuthed());
-    setReady(true);
+    fetch("/api/auth/check")
+      .then((r) => setAuthed(r.ok))
+      .catch(() => setAuthed(false))
+      .finally(() => setReady(true));
   }, []);
 
   if (!ready) return <div className="admin-login" />;
@@ -355,8 +374,8 @@ export default function Admin() {
           <button
             type="button"
             className="nav-cta"
-            onClick={() => {
-              Store.logout();
+            onClick={async () => {
+              await fetch("/api/auth/logout", { method: "POST" });
               setAuthed(false);
             }}
           >
