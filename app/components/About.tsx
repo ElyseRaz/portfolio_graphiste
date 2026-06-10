@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
 
 export default function About() {
@@ -12,8 +13,13 @@ export default function About() {
           <div className="about-photo reveal">
             <span className="tab">{t.about.tab}</span>
             <div className="img">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/image2.jpg" alt="Portrait" />
+              <Image
+                src="/image2.jpg"
+                alt="Portrait — RAZAFINDRAVONJY Solofonirina Elysé"
+                fill
+                sizes="(max-width: 980px) 100vw, 45vw"
+                style={{ objectFit: "cover", objectPosition: "50% 12%", filter: "grayscale(0.2) contrast(1.03)", transition: "filter 0.5s, transform 0.8s" }}
+              />
             </div>
           </div>
           <div className="about-text">

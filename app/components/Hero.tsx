@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
 
 export default function Hero({ onJump }: { onJump: (id: string) => void }) {
@@ -42,8 +43,14 @@ export default function Hero({ onJump }: { onJump: (id: string) => void }) {
             <div className="frame">
               <div className="ring" />
               <span className="vstamp">Portfolio — 2026</span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/image1.png" alt="RAZAFINDRAVONJY Solofonirina Elysé" />
+              <Image
+                src="/image1.png"
+                alt="RAZAFINDRAVONJY Solofonirina Elysé"
+                fill
+                priority
+                sizes="(max-width: 980px) 0px, min(42vw, 480px)"
+                style={{ objectFit: "cover", objectPosition: "50% 8%" }}
+              />
               <div className="badge">
                 2<small>YRS</small>
               </div>

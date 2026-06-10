@@ -220,7 +220,6 @@ section { position: relative; }
 .hero-portrait { position: relative; justify-self: end; }
 .hero-portrait .frame { position: relative; width: min(42vw, 480px); aspect-ratio: 1155 / 1732; }
 .hero-portrait img {
-  width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%;
   -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent), linear-gradient(90deg, transparent, #000 12% 88%, transparent);
   -webkit-mask-composite: source-in; mask-composite: intersect;
   mask-image: linear-gradient(180deg, #000 70%, transparent), linear-gradient(90deg, transparent, #000 12% 88%, transparent);
@@ -259,9 +258,8 @@ section { position: relative; }
 /* ABOUT */
 .about-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(40px, 7vw, 100px); align-items: center; }
 .about-photo { position: relative; }
-.about-photo .img { aspect-ratio: 4 / 5; overflow: hidden; background: var(--bg-3); border: 1px solid var(--line); }
-.about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; filter: grayscale(0.2) contrast(1.03); transition: filter 0.5s, transform 0.8s; }
-.about-photo:hover img { filter: grayscale(0); transform: scale(1.03); }
+.about-photo .img { aspect-ratio: 4 / 5; overflow: hidden; background: var(--bg-3); border: 1px solid var(--line); position: relative; }
+.about-photo:hover img { filter: grayscale(0) !important; transform: scale(1.03); }
 .about-photo .tab { position: absolute; top: -1px; right: -1px; background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; padding: 8px 14px; text-transform: uppercase; }
 .about-lead { font-family: var(--font-display); font-size: clamp(30px, 4.6vw, 64px); line-height: 1.2; text-transform: uppercase; margin-bottom: 28px; }
 .about-lead .accent { color: var(--accent); }
