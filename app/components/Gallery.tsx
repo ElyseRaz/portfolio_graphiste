@@ -94,10 +94,13 @@ function Lightbox({
   );
 }
 
+const PAGE = 9;
+
 export default function Gallery() {
   const { t, lang } = useLanguage();
   const store = useStore();
   const [activeCat, setActiveCat] = useState("all");
+  const [showAll, setShowAll] = useState(false);
   // Stocker l'ID du design ouvert (pas l'index) — stable même si filtered change
   const [lbId, setLbId] = useState<string | null>(null);
 
@@ -105,25 +108,42 @@ export default function Gallery() {
   const designs = store.getDesigns();
 
   const filtered = activeCat === "all" ? designs : designs.filter((d) => d.categoryId === activeCat);
-  const filteredRef = useRef(filtered);
-  filteredRef.current = filtered;
+
+  // Tri chronologique décroissant (plus récent en premier), sans année en dernier
+  const sorted = [...filtered].sort((a, b) => {
+    if (!a.year && !b.year) return 0;
+    if (!a.year) return 1;
+    if (!b.year) return -1;
+    return Number(b.year) - Number(a.year);
+  });
+
+  const sortedRef = useRef(sorted);
+  sortedRef.current = sorted;
 
   // keep activeCat valid if a category is deleted
   useEffect(() => {
     if (activeCat !== "all" && !cats.some((c) => c.id === activeCat)) setActiveCat("all");
   }, [cats, activeCat]);
 
+  // Réinitialiser la pagination quand on change de catégorie
+  useEffect(() => {
+    setShowAll(false);
+  }, [activeCat]);
+
+  const visible = showAll ? sorted : sorted.slice(0, PAGE);
+  const hasMore = sorted.length > PAGE;
+
   // Calculer l'index depuis l'ID — toujours correct même après re-render du store
-  const lbIndexRaw = lbId != null ? filtered.findIndex((d) => d.id === lbId) : -1;
+  const lbIndexRaw = lbId != null ? sorted.findIndex((d) => d.id === lbId) : -1;
   const lbIndex: number | null = lbIndexRaw >= 0 ? lbIndexRaw : null;
 
   const countFor = (id: string) =>
     id === "all" ? designs.length : designs.filter((d) => d.categoryId === id).length;
 
-  // Stables — ne changent jamais, utilisent filteredRef pour toujours lire le tableau à jour
+  // Stables — ne changent jamais, utilisent sortedRef pour toujours lire le tableau à jour
   const closeLb = useCallback(() => setLbId(null), []);
   const navLb = useCallback((dir: number) => {
-    const f = filteredRef.current;
+    const f = sortedRef.current;
     if (!f.length) return;
     setLbId((prev) => {
       if (!prev) return null;
@@ -173,51 +193,61 @@ export default function Gallery() {
         </div>
 
         {/* grid */}
-        {filtered.length === 0 ? (
+        {sorted.length === 0 ? (
           <div className="gallery-empty">
             {lang === "fr"
               ? "Aucun design dans cette catégorie pour l'instant."
               : "No design in this category yet."}
           </div>
         ) : (
-          <div className="gallery-grid">
-            {filtered.map((d, i) => (
-              <button
-                type="button"
-                className="gcard reveal"
-                key={d.id}
-                style={{ "--d": (i % 6) * 60 + "ms" } as CSSProperties}
-                onClick={() => setLbId(d.id)}
-              >
-                <div className="gcard-img">
-                  {d.image ? (
-                    <Image
-                      src={d.image}
-                      alt={d.title}
-                      fill
-                      sizes="(max-width: 480px) 100vw, (max-width: 980px) 50vw, 33vw"
-                      style={{ objectFit: "cover" }}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="gcard-noimg">{lang === "fr" ? "Sans image" : "No image"}</div>
-                  )}
-                  <span className="gcard-view">{lang === "fr" ? "Voir" : "View"} ↗</span>
-                </div>
-                <div className="gcard-body">
-                  <h3>{d.title}</h3>
-                  <span className="gcard-cat">
-                    {store.categoryName(d.categoryId)}
-                    {d.year ? " · " + d.year : ""}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
+          <>
+            <div className="gallery-grid">
+              {visible.map((d, i) => (
+                <button
+                  type="button"
+                  className="gcard reveal"
+                  key={d.id}
+                  style={{ "--d": (i % 6) * 60 + "ms" } as CSSProperties}
+                  onClick={() => setLbId(d.id)}
+                >
+                  <div className="gcard-img">
+                    {d.image ? (
+                      <Image
+                        src={d.image}
+                        alt={d.title}
+                        fill
+                        sizes="(max-width: 480px) 100vw, (max-width: 980px) 50vw, 33vw"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="gcard-noimg">{lang === "fr" ? "Sans image" : "No image"}</div>
+                    )}
+                    <span className="gcard-view">{lang === "fr" ? "Voir" : "View"} ↗</span>
+                  </div>
+                  <div className="gcard-body">
+                    <h3>{d.title}</h3>
+                    <span className="gcard-cat">
+                      {store.categoryName(d.categoryId)}
+                      {d.year ? " · " + d.year : ""}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            {!showAll && hasMore && (
+              <div className="gallery-more">
+                <button type="button" className="btn btn-ghost" onClick={() => setShowAll(true)}>
+                  {lang === "fr"
+                    ? `Voir plus (${sorted.length - PAGE})`
+                    : `View more (${sorted.length - PAGE})`}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      <Lightbox items={filtered} index={lbIndex} onClose={closeLb} onNav={navLb} />
+      <Lightbox items={sorted} index={lbIndex} onClose={closeLb} onNav={navLb} />
     </section>
   );
 }
