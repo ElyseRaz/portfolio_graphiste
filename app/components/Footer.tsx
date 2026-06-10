@@ -8,7 +8,7 @@ export default function Footer({ onJump }: { onJump: (id: string) => void }) {
   return (
     <footer className="footer">
       <div className="shell">
-        <div className="big-name reveal">SOLOFONIRINA ELYSÉ</div>
+        <div className="big-name reveal">RAZAFINDRAVONJY SOLOFONIRINA ELYSÉ</div>
         <div className="footer-grid" style={{ marginTop: 30 }}>
           <div className="meta">
             © 2026 RAZAFINDRAVONJY · {t.footer.tagline}

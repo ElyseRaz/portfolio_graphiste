@@ -8,6 +8,7 @@ import {
   CONTACT_PHONE_HREF,
   CONTACT_PHONE_DISPLAY,
 } from "../lib/content";
+import SocialLogo from "./SocialLogo";
 
 type FormState = "idle" | "sending" | "done";
 
@@ -71,7 +72,7 @@ export default function Contact() {
             <div className="socials reveal" style={{ "--d": "320ms" } as CSSProperties}>
               {SOCIALS.map((s) => (
                 <a key={s.label} href={s.href} title={s.label} aria-label={s.label}>
-                  {s.short}
+                  <SocialLogo label={s.label} />
                 </a>
               ))}
             </div>

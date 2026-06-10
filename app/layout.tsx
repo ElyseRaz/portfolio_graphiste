@@ -3,6 +3,7 @@ import { Bebas_Neue, Oswald, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { LanguageProvider } from "./lib/i18n";
+import { ThemeProvider } from "./lib/theme";
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -55,7 +56,9 @@ export default function RootLayout({
       className={`${bebas.variable} ${oswald.variable} ${jetbrains.variable} ${aileron.variable}`}
     >
       <body>
-        <LanguageProvider>{children}</LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>{children}</LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

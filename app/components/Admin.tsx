@@ -132,44 +132,57 @@ function DesignPanel() {
   const cats = store.getCategories();
   const designs = store.getDesigns();
   const [form, setForm] = useState({ title: "", categoryId: "", year: "", desc: "" });
-  const [preview, setPreview] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    setBusy(true);
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setFile(f);
+    setPreviewUrl(URL.createObjectURL(f));
     setErr("");
-    try {
-      const data = await store.resizeImage(file);
-      setPreview(data);
-    } catch {
-      setErr(lang === "fr" ? "Image invalide" : "Invalid image");
-    }
-    setBusy(false);
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) {
       setErr(lang === "fr" ? "Titre requis" : "Title required");
       return;
     }
-    if (!preview) {
+    if (!file) {
       setErr(lang === "fr" ? "Image requise" : "Image required");
       return;
     }
-    store.addDesign({
-      ...form,
-      categoryId: form.categoryId || (cats[0] && cats[0].id) || null,
-      image: preview,
-    });
-    setForm({ title: "", categoryId: "", year: "", desc: "" });
-    setPreview("");
+    setBusy(true);
     setErr("");
-    if (fileRef.current) fileRef.current.value = "";
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) throw new Error("upload");
+      const { url } = await res.json();
+      store.addDesign({
+        ...form,
+        categoryId: form.categoryId || cats[0]?.id || null,
+        image: url,
+      });
+      setForm({ title: "", categoryId: "", year: "", desc: "" });
+      setFile(null);
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl("");
+      if (fileRef.current) fileRef.current.value = "";
+    } catch {
+      setErr(
+        lang === "fr"
+          ? "Erreur d'upload. Vérifiez votre connexion."
+          : "Upload error. Check your connection."
+      );
+    }
+    setBusy(false);
   };
 
   return (
@@ -229,23 +242,19 @@ function DesignPanel() {
         <div className="df-upload">
           <label className="upload-zone">
             <input ref={fileRef} type="file" accept="image/*" onChange={onFile} hidden />
-            {preview ? (
+            {previewUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt="preview" />
+              <img src={previewUrl} alt="preview" />
             ) : (
               <span>
-                {busy
-                  ? lang === "fr"
-                    ? "Traitement…"
-                    : "Processing…"
-                  : lang === "fr"
-                    ? "📁 Choisir une image"
-                    : "📁 Choose an image"}
+                {lang === "fr" ? "📁 Choisir une image" : "📁 Choose an image"}
               </span>
             )}
           </label>
           <button type="submit" className="btn btn-primary" disabled={busy}>
-            {lang === "fr" ? "Ajouter le design" : "Add design"} +
+            {busy
+              ? lang === "fr" ? "Upload en cours…" : "Uploading…"
+              : lang === "fr" ? "Ajouter le design +" : "Add design +"}
           </button>
         </div>
         {err && <div className="df-err">{err}</div>}
@@ -318,7 +327,7 @@ export default function Admin() {
           <span className="mark">R</span>
           <span>
             {lang === "fr" ? "ESPACE ADMIN" : "ADMIN AREA"}
-            <span className="mono" style={{ display: "block" }}>
+            <span className="mono admin-brand-sub">
               RAZAFINDRAVONJY · Portfolio
             </span>
           </span>
