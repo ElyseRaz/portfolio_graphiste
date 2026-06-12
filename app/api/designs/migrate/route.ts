@@ -38,15 +38,14 @@ export async function POST(req: NextRequest) {
     if (!publicId) { failed++; continue; }
 
     try {
+      const title    = safe(d.title || "Sans titre");
+      const desc     = safe(d.desc || "");
+      const year     = safe(d.year || "");
+      const cat_id   = safe(d.categoryId || "");
+      const cat_name = safe(d.categoryName || "");
       await cloudinary.uploader.explicit(publicId, {
         type: "upload",
-        context: {
-          title:    safe(d.title || "Sans titre"),
-          desc:     safe(d.desc || ""),
-          year:     safe(d.year || ""),
-          cat_id:   safe(d.categoryId || ""),
-          cat_name: safe(d.categoryName || ""),
-        },
+        context: `title=${title}|desc=${desc}|year=${year}|cat_id=${cat_id}|cat_name=${cat_name}`,
       });
       ok++;
     } catch {

@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
+  // Format string natif Cloudinary : "key=value|key=value"
+  const context = `title=${title}|desc=${desc}|year=${year}|cat_id=${cat_id}|cat_name=${cat_name}`;
+
   return new Promise<NextResponse>((resolve) => {
     cloudinary.uploader
       .upload_stream(
@@ -57,11 +60,12 @@ export async function POST(req: NextRequest) {
           folder: "portfolio",
           resource_type: "image",
           transformation: [{ width: 1500, height: 1500, crop: "limit", quality: "auto:good" }],
-          context: { title, desc, year, cat_id, cat_name },
+          context,
         },
         (error, result) => {
           if (error || !result) {
-            resolve(NextResponse.json({ error: "Échec de l'upload" }, { status: 500 }));
+            const msg = error?.message || "Échec de l'upload";
+            resolve(NextResponse.json({ error: msg }, { status: 500 }));
           } else {
             resolve(NextResponse.json({ url: result.secure_url, public_id: result.public_id }));
           }
