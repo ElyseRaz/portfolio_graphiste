@@ -71,7 +71,12 @@ export async function POST(req: NextRequest) {
         .end(buffer);
     });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
+    const msg =
+      e instanceof Error
+        ? e.message
+        : (e != null && typeof e === "object" && "message" in e)
+          ? String((e as Record<string, unknown>).message)
+          : JSON.stringify(e);
     console.error("[upload] étape 1 échouée:", msg);
     return NextResponse.json({ error: "Échec upload image", detail: msg }, { status: 500 });
   }
