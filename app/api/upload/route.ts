@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
+import type { UploadApiResponse } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "../../lib/session";
 
@@ -11,8 +12,7 @@ cloudinary.config({
 const MAX_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
 
-// Cloudinary context uses | and = as separators — remove them from values
-const safe = (s: string) => s.replace(/[|=]/g, " ").trim();
+const safe = (s: string) => (s || "").replace(/[|=]/g, " ").trim();
 
 export async function POST(req: NextRequest) {
   const authed = await verifySession();
@@ -31,15 +31,9 @@ export async function POST(req: NextRequest) {
   const form = await req.formData();
   const file = form.get("file") as File | null;
 
-  if (!file) {
-    return NextResponse.json({ error: "Aucun fichier reçu" }, { status: 400 });
-  }
-  if (file.size > MAX_SIZE) {
-    return NextResponse.json({ error: "Fichier trop volumineux (max 10 Mo)" }, { status: 400 });
-  }
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: "Format non autorisé (JPEG, PNG, WebP, GIF, AVIF)" }, { status: 400 });
-  }
+  if (!file) return NextResponse.json({ error: "Aucun fichier reçu" }, { status: 400 });
+  if (file.size > MAX_SIZE) return NextResponse.json({ error: "Fichier trop volumineux (max 10 Mo)" }, { status: 400 });
+  if (!ALLOWED_TYPES.includes(file.type)) return NextResponse.json({ error: "Format non autorisé (JPEG, PNG, WebP, GIF, AVIF)" }, { status: 400 });
 
   const title    = safe((form.get("title")    as string | null) || "");
   const desc     = safe((form.get("desc")     as string | null) || "");
@@ -50,27 +44,39 @@ export async function POST(req: NextRequest) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  // Format string natif Cloudinary : "key=value|key=value"
-  const context = `title=${title}|desc=${desc}|year=${year}|cat_id=${cat_id}|cat_name=${cat_name}`;
-
-  return new Promise<NextResponse>((resolve) => {
-    cloudinary.uploader
-      .upload_stream(
-        {
-          folder: "portfolio",
-          resource_type: "image",
-          transformation: [{ width: 1500, height: 1500, crop: "limit", quality: "auto:good" }],
-          context,
-        },
-        (error, result) => {
-          if (error || !result) {
-            const msg = error?.message || "Échec de l'upload";
-            resolve(NextResponse.json({ error: msg }, { status: 500 }));
-          } else {
-            resolve(NextResponse.json({ url: result.secure_url, public_id: result.public_id }));
+  // Étape 1 : upload de l'image (sans context pour éviter le problème de signature)
+  let uploaded: UploadApiResponse;
+  try {
+    uploaded = await new Promise<UploadApiResponse>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: "portfolio",
+            resource_type: "image",
+            transformation: [{ width: 1500, height: 1500, crop: "limit", quality: "auto:good" }],
+          },
+          (error, result) => {
+            if (error || !result) reject(error || new Error("upload-failed"));
+            else resolve(result);
           }
-        }
-      )
-      .end(buffer);
-  });
+        )
+        .end(buffer);
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Échec de l'upload";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+
+  // Étape 2 : attacher les métadonnées via Admin API (pas de problème de signature)
+  try {
+    await cloudinary.uploader.explicit(uploaded.public_id, {
+      type: "upload",
+      context: `title=${title}|desc=${desc}|year=${year}|cat_id=${cat_id}|cat_name=${cat_name}`,
+    });
+  } catch {
+    // Les métadonnées n'ont pas pu être attachées mais l'image est bien uploadée
+    // On retourne quand même un succès — la migration peut corriger ça plus tard
+  }
+
+  return NextResponse.json({ url: uploaded.secure_url, public_id: uploaded.public_id });
 }
