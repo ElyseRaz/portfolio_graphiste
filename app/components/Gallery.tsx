@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type SyntheticEvent } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
@@ -18,6 +18,7 @@ function Lightbox({
   onNav: (dir: number) => void;
 }) {
   const { lang } = useLanguage();
+  const [aspect, setAspect] = useState<"portrait" | "landscape" | "square">("landscape");
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -33,9 +34,21 @@ function Lightbox({
     };
   }, [index, onClose, onNav]);
 
+  useEffect(() => {
+    setAspect("landscape");
+  }, [index]);
+
   if (index == null) return null;
   const d = items[index];
   if (!d) return null;
+
+  const handleLoad = (e: SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const r = img.naturalWidth / img.naturalHeight;
+    if (r < 0.85) setAspect("portrait");
+    else if (r > 1.2) setAspect("landscape");
+    else setAspect("square");
+  };
 
   // Portal : rendu directement sur document.body, hors du contexte z-index de <main>
   // Permet au lightbox (z-index 120) de passer au-dessus de la navbar (z-index 50)
@@ -68,11 +81,11 @@ function Lightbox({
           </button>
         </>
       )}
-      <div className="lb-stage" onClick={(e) => e.stopPropagation()}>
+      <div className={`lb-stage lb-stage--${aspect}`} onClick={(e) => e.stopPropagation()}>
         <div className="lb-img">
           {d.image ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={d.image} alt={d.title} />
+            <img src={d.image} alt={d.title} onLoad={handleLoad} />
           ) : (
             <div className="lb-noimg">{lang === "fr" ? "Aucune image" : "No image"}</div>
           )}
