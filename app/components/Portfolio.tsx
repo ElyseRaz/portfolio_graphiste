@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useReveal } from "../lib/useReveal";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
+import ParticleField from "./ParticleField";
 
 const Marquee = dynamic(() => import("./Marquee"));
 const About = dynamic(() => import("./About"));
@@ -29,11 +30,7 @@ export default function Portfolio() {
 
   return (
     <>
-      <div className="bg3d" aria-hidden="true">
-        <span className="orb orb-a" />
-        <span className="orb orb-b" />
-        <span className="orb orb-c" />
-      </div>
+      <ParticleField />
       <div className="atmosphere" />
       <div className="grain" />
       <Navbar onJump={onJump} />
