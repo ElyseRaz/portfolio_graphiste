@@ -1,35 +1,28 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, JetBrains_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { Roboto, Roboto_Condensed, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./lib/i18n";
 import { ThemeProvider } from "./lib/theme";
 
-const bebas = Bebas_Neue({
-  weight: "400",
+const robotoCondensed = Roboto_Condensed({
+  weight: ["400", "700"],
   subsets: ["latin"],
-  variable: "--font-bebas",
+  variable: "--font-roboto-condensed",
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
+const robotoMono = Roboto_Mono({
   weight: ["400", "500"],
   subsets: ["latin"],
-  variable: "--font-jetbrains",
+  variable: "--font-roboto-mono",
   display: "swap",
 });
 
-const aileron = localFont({
-  variable: "--font-aileron",
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700", "900"],
+  subsets: ["latin"],
+  variable: "--font-roboto",
   display: "swap",
-  src: [
-    { path: "./fonts/Aileron-Light.otf", weight: "300", style: "normal" },
-    { path: "./fonts/Aileron-Regular.otf", weight: "400", style: "normal" },
-    { path: "./fonts/Aileron-SemiBold.otf", weight: "600", style: "normal" },
-    { path: "./fonts/Aileron-Bold.otf", weight: "700", style: "normal" },
-    { path: "./fonts/Aileron-Heavy.otf", weight: "800", style: "normal" },
-    { path: "./fonts/Aileron-Black.otf", weight: "900", style: "normal" },
-  ],
 });
 
 export const metadata: Metadata = {
@@ -46,7 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${bebas.variable} ${jetbrains.variable} ${aileron.variable}`}
+      className={`${robotoCondensed.variable} ${robotoMono.variable} ${roboto.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
