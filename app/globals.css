@@ -43,6 +43,8 @@
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  color-scheme: dark;
 }
 
 /* ============================================================
@@ -63,6 +65,8 @@ html.light {
   --card: #efedf7;
   --shadow: 0 24px 60px -24px rgba(16, 14, 26, 0.18);
   --shadow-accent: 0 18px 44px -18px rgba(91, 61, 240, 0.35);
+
+  color-scheme: light;
 }
 html.light .grain { opacity: 0.02; }
 html.light .atmosphere::before { opacity: 0.5; }
@@ -102,6 +106,45 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     radial-gradient(60% 50% at 80% 8%, var(--accent-soft), transparent 60%),
     radial-gradient(50% 50% at 6% 92%, rgba(52, 224, 200, 0.10), transparent 65%);
   opacity: 0.9;
+}
+
+/* fond 3D permanent — orbes qui dérivent en profondeur.
+   Uniquement `transform` (jamais top/left/filter animés) : coût compositeur
+   GPU seul, aucun reflow/repaint pendant la boucle. */
+.bg3d { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; perspective: 1400px; contain: strict; }
+.bg3d .orb {
+  position: absolute; border-radius: 50%; filter: blur(70px);
+  transform-style: preserve-3d; will-change: transform;
+}
+.bg3d .orb-a {
+  top: 6%; left: 62%; width: 46vw; height: 46vw; max-width: 620px; max-height: 620px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%); opacity: 0.24;
+  animation: orbit3d-a 36s var(--ease) infinite;
+}
+.bg3d .orb-b {
+  bottom: 2%; left: 2%; width: 38vw; height: 38vw; max-width: 520px; max-height: 520px;
+  background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%); opacity: 0.15;
+  animation: orbit3d-b 44s var(--ease) infinite;
+}
+.bg3d .orb-c {
+  top: 40%; left: 26%; width: 24vw; height: 24vw; max-width: 340px; max-height: 340px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%); opacity: 0.12;
+  animation: orbit3d-c 30s var(--ease) infinite;
+}
+@keyframes orbit3d-a {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate3d(1, 1, 0, 0deg) scale(1); }
+  50% { transform: translate3d(-70px, 55px, 140px) rotate3d(1, 1, 0, 60deg) scale(1.18); }
+}
+@keyframes orbit3d-b {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate3d(0, 1, 1, 0deg) scale(1); }
+  50% { transform: translate3d(80px, -45px, -120px) rotate3d(0, 1, 1, -50deg) scale(0.86); }
+}
+@keyframes orbit3d-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(35px, 65px, 100px) scale(1.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg3d .orb { animation: none; }
 }
 .grain {
   position: fixed; inset: -50%; z-index: 1; pointer-events: none; opacity: 0.04;

@@ -29,6 +29,11 @@ export default function Portfolio() {
 
   return (
     <>
+      <div className="bg3d" aria-hidden="true">
+        <span className="orb orb-a" />
+        <span className="orb orb-b" />
+        <span className="orb orb-c" />
+      </div>
       <div className="atmosphere" />
       <div className="grain" />
       <Navbar onJump={onJump} />
