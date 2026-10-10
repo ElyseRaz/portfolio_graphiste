@@ -646,3 +646,14 @@ section { position: relative; }
   .filter { flex: none; scroll-snap-align: start; }
   .section-head { padding-bottom: 24px; margin-bottom: 28px; }
 }
+
+/* ---- Back-office : aucun champ ne doit déborder (ni être coupé) ---- */
+.admin-grid > * { min-width: 0; }
+.df-row { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.7fr); }
+.design-form label { min-width: 0; }
+.design-form input, .design-form select, .design-form textarea, .design-search { width: 100%; min-width: 0; max-width: 100%; }
+.design-form textarea { resize: vertical; }
+.design-form select { text-overflow: ellipsis; }
+.upload-col, .df-upload > * { min-width: 0; }
+@media (max-width: 1180px) and (min-width: 981px) { .df-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .df-row .df-year { grid-column: 1 / -1; } }
+@media (max-width: 640px) { .df-row { grid-template-columns: minmax(0, 1fr); } }
