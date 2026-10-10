@@ -19,12 +19,25 @@ function Lightbox({
 }) {
   const { lang } = useLanguage();
   const [aspect, setAspect] = useState<"portrait" | "landscape" | "square">("landscape");
+  // Sens de la dernière navigation (0 = ouverture) — pilote l'animation de transition
+  const [dir, setDir] = useState<-1 | 0 | 1>(0);
+  const go = useCallback(
+    (d: 1 | -1) => {
+      setDir(d);
+      onNav(d);
+    },
+    [onNav]
+  );
+
+  useEffect(() => {
+    if (index == null) setDir(0);
+  }, [index]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") onNav(1);
-      if (e.key === "ArrowLeft") onNav(-1);
+      if (e.key === "ArrowRight") go(1);
+      if (e.key === "ArrowLeft") go(-1);
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = index != null ? "hidden" : "";
@@ -32,7 +45,7 @@ function Lightbox({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [index, onClose, onNav]);
+  }, [index, onClose, go]);
 
   useEffect(() => {
     setAspect("landscape");
@@ -64,7 +77,7 @@ function Lightbox({
             className="lb-nav prev"
             onClick={(e) => {
               e.stopPropagation();
-              onNav(-1);
+              go(-1);
             }}
           >
             ‹
@@ -74,14 +87,17 @@ function Lightbox({
             className="lb-nav next"
             onClick={(e) => {
               e.stopPropagation();
-              onNav(1);
+              go(1);
             }}
           >
             ›
           </button>
         </>
       )}
-      <div className={`lb-stage lb-stage--${aspect}`} onClick={(e) => e.stopPropagation()}>
+      <div
+        key={d.id}
+        className={`lb-stage lb-stage--${aspect} lb-anim-${dir > 0 ? "next" : dir < 0 ? "prev" : "open"}`}
+        onClick={(e) => e.stopPropagation()}>
         <div className="lb-img">
           {d.image ? (
             // eslint-disable-next-line @next/next/no-img-element
