@@ -161,7 +161,8 @@ export default function Gallery() {
   const { t, lang } = useLanguage();
   const store = useStore();
   const [activeCat, setActiveCat] = useState("all");
-  const [showAll, setShowAll] = useState(false);
+  const [limit, setLimit] = useState(PAGE);
+  const sectionRef = useRef<HTMLElement>(null);
   // Stocker l'ID du design ouvert (pas l'index) — stable même si filtered change
   const [lbId, setLbId] = useState<string | null>(null);
 
@@ -196,11 +197,15 @@ export default function Gallery() {
 
   // Réinitialiser la pagination quand on change de catégorie
   useEffect(() => {
-    setShowAll(false);
+    setLimit(PAGE);
   }, [activeCat]);
 
-  const visible = showAll ? sorted : sorted.slice(0, PAGE);
-  const hasMore = sorted.length > PAGE;
+  const visible = sorted.slice(0, limit);
+  const remaining = sorted.length - visible.length;
+  const collapse = () => {
+    setLimit(PAGE);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   // Calculer l'index depuis l'ID — toujours correct même après re-render du store
   const lbIndexRaw = lbId != null ? sorted.findIndex((d) => d.id === lbId) : -1;
@@ -223,7 +228,7 @@ export default function Gallery() {
   }, []);
 
   return (
-    <section className="block" id="work">
+    <section className="block" id="work" ref={sectionRef}>
       <div className="shell">
         <div className="section-head">
           <div>
@@ -314,13 +319,25 @@ export default function Gallery() {
                 </button>
               ))}
             </div>
-            {!showAll && hasMore && (
+            {sorted.length > PAGE && (
               <div className="gallery-more">
-                <button type="button" className="btn btn-ghost" onClick={() => setShowAll(true)}>
-                  {lang === "fr"
-                    ? `Voir plus (${sorted.length - PAGE})`
-                    : `View more (${sorted.length - PAGE})`}
-                </button>
+                <span className="gallery-count" aria-live="polite">
+                  {visible.length} / {sorted.length}
+                </span>
+                <div className="gallery-more-btns">
+                  {remaining > 0 && (
+                    <button type="button" className="btn btn-ghost" onClick={() => setLimit((l) => l + PAGE)}>
+                      {lang === "fr"
+                        ? `Voir plus (${Math.min(PAGE, remaining)})`
+                        : `View more (${Math.min(PAGE, remaining)})`}
+                    </button>
+                  )}
+                  {limit > PAGE && (
+                    <button type="button" className="btn-link" onClick={collapse}>
+                      {lang === "fr" ? "Réduire ↑" : "Collapse ↑"}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </>

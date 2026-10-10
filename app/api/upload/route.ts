@@ -48,19 +48,22 @@ export async function POST(req: NextRequest) {
           resource_type: "image",
           transformation: [{ width: 1500, height: 1500, crop: "limit", quality: "auto:good" }],
         },
-        (error, result) => {
+        async (error, result) => {
           if (error || !result) {
             const msg = (error as { message?: string })?.message ?? "Échec de l'upload";
             resolve(NextResponse.json({ error: msg }, { status: 500 }));
             return;
           }
-          // Attacher les métadonnées (fire-and-forget)
-          cloudinary.uploader
-            .explicit(result.public_id, {
+          // Attacher les métadonnées AVANT de répondre : sinon le design n'apparaît pas
+          // (ni titre ni catégorie) dans la liste rafraîchie juste après l'upload.
+          try {
+            await cloudinary.uploader.explicit(result.public_id, {
               type: "upload",
               context: `title=${title}|desc=${desc}|year=${year}|cat_id=${cat_id}|cat_name=${cat_name}`,
-            })
-            .catch(() => { /* silencieux — l'image est uploadée, migration possible */ });
+            });
+          } catch {
+            /* l'image est uploadée ; migration possible */
+          }
 
           resolve(NextResponse.json({ url: result.secure_url, public_id: result.public_id }));
         }
