@@ -26,6 +26,7 @@ export interface Design {
 interface State {
   categories: Category[];
   designs: Design[];
+  loaded: boolean;
 }
 
 const KEY = "port_gallery_v1";
@@ -37,7 +38,7 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: "c_social",   name: "Réseaux Sociaux" },
 ];
 
-let state: State = { categories: [...DEFAULT_CATEGORIES], designs: [] };
+let state: State = { categories: [...DEFAULT_CATEGORIES], designs: [], loaded: false };
 const listeners = new Set<() => void>();
 
 function loadCategories(): Category[] {
@@ -68,6 +69,7 @@ export const Store = {
   get: () => state,
   getCategories: () => state.categories.slice(),
   getDesigns: () => state.designs.slice(),
+  isLoaded: () => state.loaded,
 
   categoryName: (id: string | null) => {
     if (!id) return "—";
@@ -84,14 +86,14 @@ export const Store = {
     return () => { listeners.delete(fn); };
   },
 
-  async refreshDesigns() {
+  // fresh = true (back-office) : contourne le cache CDN après un ajout / une suppression
+  async refreshDesigns(fresh = false) {
     try {
-      const res = await fetch("/api/designs");
-      if (res.ok) {
-        state.designs = await res.json();
-        listeners.forEach((fn) => fn());
-      }
+      const res = await fetch(fresh ? `/api/designs?t=${Date.now()}` : "/api/designs");
+      if (res.ok) state.designs = await res.json();
     } catch { /* ignore — keep current state */ }
+    state.loaded = true;
+    listeners.forEach((fn) => fn());
   },
 
   addCategory(name: string) {
@@ -110,7 +112,7 @@ export const Store = {
 
   async deleteDesign(id: string) {
     await fetch(`/api/designs?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    await Store.refreshDesigns();
+    await Store.refreshDesigns(true);
   },
 
   reset() {

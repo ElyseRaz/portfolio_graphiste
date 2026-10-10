@@ -5,6 +5,29 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
 import { Store, useStore, type Design } from "../lib/store";
+import { cldUrl, cloudinaryLoader } from "../lib/cloudinary";
+
+/* Image de carte : fondu à l'apparition (évite le "pop" brutal), gère le cas
+   où l'image est déjà en cache avant l'hydratation. */
+function CardImage({ src, alt, priority }: { src: string; alt: string; priority: boolean }) {
+  const [ready, setReady] = useState(false);
+  return (
+    <Image
+      ref={(el) => {
+        if (el?.complete && el.naturalWidth > 0) setReady(true);
+      }}
+      loader={cloudinaryLoader}
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 640px) 100vw, (max-width: 980px) 50vw, (max-width: 1100px) 33vw, 25vw"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      onLoad={() => setReady(true)}
+      className={"gimg" + (ready ? " ready" : "")}
+    />
+  );
+}
 
 function Lightbox({
   items,
@@ -50,6 +73,15 @@ function Lightbox({
   useEffect(() => {
     setAspect("landscape");
   }, [index]);
+
+  // Précharge l'image suivante et la précédente : la transition animée est instantanée
+  useEffect(() => {
+    if (index == null || items.length < 2) return;
+    for (const off of [1, -1]) {
+      const n = items[(index + off + items.length) % items.length];
+      if (n?.image) new window.Image().src = cldUrl(n.image, 1400);
+    }
+  }, [index, items]);
 
   if (index == null) return null;
   const d = items[index];
@@ -101,7 +133,7 @@ function Lightbox({
         <div className="lb-img">
           {d.image ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={d.image} alt={d.title} onLoad={handleLoad} />
+            <img src={cldUrl(d.image, 1400)} alt={d.title} onLoad={handleLoad} decoding="async" />
           ) : (
             <div className="lb-noimg">{lang === "fr" ? "Aucune image" : "No image"}</div>
           )}
@@ -227,7 +259,20 @@ export default function Gallery() {
         </div>
 
         {/* grid */}
-        {sorted.length === 0 ? (
+        {!store.isLoaded() ? (
+          <div className="gallery-grid" aria-busy="true">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div className="gcard skeleton" key={i}>
+                <div className="gcard-img" />
+                <div className="gcard-body">
+                  <span className="sk-line" style={{ width: "40%" }} />
+                  <span className="sk-line lg" />
+                  <span className="sk-line" style={{ width: "80%" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : sorted.length === 0 ? (
           <div className="gallery-empty">
             {lang === "fr"
               ? "Aucun design dans cette catégorie pour l'instant."
@@ -246,13 +291,7 @@ export default function Gallery() {
                 >
                   <div className="gcard-img">
                     {d.image ? (
-                      <Image
-                        src={d.image}
-                        alt={d.title}
-                        fill
-                        sizes="(max-width: 480px) 100vw, (max-width: 980px) 50vw, 33vw"
-                        loading="lazy"
-                      />
+                      <CardImage src={d.image} alt={d.title} priority={i < 4} />
                     ) : (
                       <div className="gcard-noimg">{lang === "fr" ? "Sans image" : "No image"}</div>
                     )}

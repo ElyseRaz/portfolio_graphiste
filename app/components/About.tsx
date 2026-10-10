@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
+import portrait from "../../public/image2.webp";
 
 export default function About() {
   const { t } = useLanguage();
@@ -14,7 +15,8 @@ export default function About() {
             <div className="img-wrap">
               <div className="img">
                 <Image
-                  src="/image2.png"
+                  src={portrait}
+                  placeholder="blur"
                   alt="Portrait — RAZAFINDRAVONJY Solofonirina Elysé"
                   fill
                   sizes="(max-width: 980px) 100vw, 40vw"

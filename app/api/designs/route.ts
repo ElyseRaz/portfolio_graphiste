@@ -16,7 +16,11 @@ interface CldResource {
   context?: { custom?: Record<string, string> };
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // ?t=… (back-office) : toujours frais ; sinon cache CDN 5 min + stale-while-revalidate
+  const cache = new URL(req.url).searchParams.has("t")
+    ? "no-store"
+    : "public, max-age=0, s-maxage=300, stale-while-revalidate=900";
   if (!process.env.CLOUDINARY_API_SECRET) {
     return NextResponse.json([]);
   }
@@ -38,7 +42,7 @@ export async function GET() {
         desc: r.context!.custom!.desc || "",
         year: r.context!.custom!.year || "",
       }));
-    return NextResponse.json(designs);
+    return NextResponse.json(designs, { headers: { "Cache-Control": cache } });
   } catch {
     return NextResponse.json([]);
   }

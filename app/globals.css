@@ -558,3 +558,18 @@ section { position: relative; }
 @media (prefers-reduced-motion: reduce) {
   .lb-back, .lb-stage, .lb-stage *, .lb-anim-open, .lb-anim-next, .lb-anim-prev { animation: none !important; transition: none !important; }
 }
+
+/* ============================================================
+   CHARGEMENT DES IMAGES
+   ============================================================ */
+.gimg { opacity: 0; transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+.gimg.ready { opacity: 1; }
+.gcard-img { background: linear-gradient(110deg, var(--bg-3) 30%, var(--bg-2) 50%, var(--bg-3) 70%); background-size: 200% 100%; animation: shimmer 1.6s linear infinite; }
+.gcard-img:has(.gimg.ready) { animation: none; background: var(--bg-3); }
+.gcard.skeleton { pointer-events: none; }
+.gcard.skeleton .gcard-body { gap: 12px; }
+.sk-line { display: block; height: 12px; border-radius: 6px; background: var(--bg-3); }
+.sk-line.lg { height: 22px; width: 70%; margin-top: 4px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .gcard-img { animation: none; } .gimg { transition: none; } }
+.gcard-img:has(.gcard-noimg) { animation: none; background: var(--bg-3); }

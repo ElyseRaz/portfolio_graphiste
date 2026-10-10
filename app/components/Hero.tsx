@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
+import portrait from "../../public/image1.webp";
 
 /* Tilt 3D du portrait, suivant le curseur. Purement compositor (transform),
    rect mis en cache (pas de reflow dans le handler), rAF-throttled, et
@@ -108,10 +109,11 @@ export default function Hero({ onJump }: { onJump: (id: string) => void }) {
             <div className="frame" ref={frameRef}>
               <span className="tag">{t.hero.tags[0]}</span>
               <Image
-                src="/image1.png"
+                src={portrait}
+                placeholder="blur"
                 alt="RAZAFINDRAVONJY Solofonirina Elysé"
                 fill
-                priority
+                preload
                 sizes="(max-width: 980px) 90vw, 440px"
                 style={{ objectFit: "cover", objectPosition: "50% 8%" }}
               />

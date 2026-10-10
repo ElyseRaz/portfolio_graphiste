@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "../lib/i18n";
 import { Store, useStore } from "../lib/store";
+import { cldUrl } from "../lib/cloudinary";
 
 function Login({ onOk }: { onOk: () => void }) {
   const { lang } = useLanguage();
@@ -216,7 +217,7 @@ function DesignPanel() {
       fd.append("cat_name", catName);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       if (!res.ok) throw new Error("upload");
-      await Store.refreshDesigns();
+      await Store.refreshDesigns(true);
       setForm({ title: "", categoryId: "", year: "", desc: "" });
       setFile(null);
       URL.revokeObjectURL(previewUrl);
@@ -318,7 +319,7 @@ function DesignPanel() {
             <div className="dl-thumb">
               {d.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={d.image} alt="" />
+                <img src={cldUrl(d.image, 160)} alt="" loading="lazy" />
               ) : (
                 <span>—</span>
               )}
@@ -389,7 +390,7 @@ function MigratePanel() {
       if (!res.ok) throw new Error();
       const data = await res.json();
       setResult(data);
-      await Store.refreshDesigns();
+      await Store.refreshDesigns(true);
       // Nettoyer les designs de localStorage — migration terminée
       const raw = localStorage.getItem("port_gallery_v1");
       const parsed = JSON.parse(raw || "{}");
