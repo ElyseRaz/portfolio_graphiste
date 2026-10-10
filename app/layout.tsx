@@ -1,27 +1,19 @@
 import type { Metadata } from "next";
-import { Roboto, Roboto_Condensed, Roboto_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./lib/i18n";
-import { ThemeProvider } from "./lib/theme";
 
-const robotoCondensed = Roboto_Condensed({
-  weight: ["400", "700"],
+const spaceGrotesk = Space_Grotesk({
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-roboto-condensed",
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
-const robotoMono = Roboto_Mono({
-  weight: ["400", "500"],
+const jakarta = Plus_Jakarta_Sans({
+  weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
-  variable: "--font-roboto-mono",
-  display: "swap",
-});
-
-const roboto = Roboto({
-  weight: ["300", "400", "500", "700", "900"],
-  subsets: ["latin"],
-  variable: "--font-roboto",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -39,15 +31,13 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${robotoCondensed.variable} ${robotoMono.variable} ${roboto.variable}`}
+      className={`${spaceGrotesk.variable} ${jakarta.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
       </head>
       <body>
-        <ThemeProvider>
-          <LanguageProvider>{children}</LanguageProvider>
-        </ThemeProvider>
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

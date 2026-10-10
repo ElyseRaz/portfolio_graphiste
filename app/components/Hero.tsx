@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useLanguage } from "../lib/i18n";
 
@@ -30,7 +30,7 @@ function usePortraitTilt() {
       if (!pending) return;
       const rx = ((pending.y - rect.height / 2) / rect.height) * -14;
       const ry = ((pending.x - rect.width / 2) / rect.width) * 14;
-      frame.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.03, 1.03, 1.03)`;
+      frame.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.02, 1.02, 1.02)`;
     };
     const onMove = (e: MouseEvent) => {
       pending = { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -68,66 +68,60 @@ function usePortraitTilt() {
 }
 
 export default function Hero({ onJump }: { onJump: (id: string) => void }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { wrapRef, frameRef } = usePortraitTilt();
+  const d = (ms: number) => ({ "--d": ms + "ms" }) as React.CSSProperties;
+  const stats = t.about.stats;
   return (
     <header className="hero" id="top">
       <div className="shell">
         <div className="hero-grid">
           <div className="hero-left">
-            <div className="hero-meta reveal" style={{ "--d": "80ms" } as React.CSSProperties}>
-              {t.hero.tags.map((tag, i) => (
-                <Fragment key={i}>
-                  {i > 0 && <span className="dot" />}
-                  <span className="tag">{tag}</span>
-                </Fragment>
-              ))}
+            <div className="pill reveal" style={d(80)}>
+              <span className="dot" />
+              {t.hero.tags.join(" · ")}
             </div>
             <h1 className="hero-name">
-              <span className="l1 reveal" style={{ "--d": "160ms" } as React.CSSProperties}>
-                {t.hero.name1}
-              </span>
-              <span className="l2 reveal" style={{ "--d": "280ms" } as React.CSSProperties}>
-                {t.hero.name2}
-              </span>
+              <span className="l1 reveal" style={d(160)}>{t.hero.name1}</span>
+              <span className="l2 reveal" style={d(260)}>{t.hero.name2}.</span>
             </h1>
-            <p className="hero-sub reveal" style={{ "--d": "400ms" } as React.CSSProperties}>
-              {t.hero.sub}
-            </p>
-            <div className="hero-actions reveal" style={{ "--d": "500ms" } as React.CSSProperties}>
+            <p className="hero-sub reveal" style={d(360)}>{t.hero.sub}</p>
+            <div className="hero-actions reveal" style={d(460)}>
               <button type="button" className="btn btn-primary" onClick={() => onJump("work")}>
-                {t.hero.primary} <span className="arrow">↗</span>
+                {t.hero.primary} <span className="arrow">→</span>
               </button>
               <button type="button" className="btn btn-ghost" onClick={() => onJump("contact")}>
                 {t.hero.ghost}
               </button>
             </div>
+            <div className="hero-stats reveal" style={d(560)}>
+              {stats.map((s, i) => (
+                <div className="stat" key={i}>
+                  <div className="n">{s.n}</div>
+                  <div className="k">{s.k}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="hero-portrait reveal" ref={wrapRef} style={{ "--d": "360ms" } as React.CSSProperties}>
+          <div className="hero-portrait reveal" ref={wrapRef} style={d(300)}>
+            <div className="sheet" />
             <div className="frame" ref={frameRef}>
-              <div className="ring" />
-              <span className="vstamp">Portfolio — 2026</span>
+              <span className="tag">{t.hero.tags[0]}</span>
               <Image
                 src="/image1.png"
                 alt="RAZAFINDRAVONJY Solofonirina Elysé"
                 fill
                 priority
-                sizes="(max-width: 980px) 0px, min(42vw, 480px)"
+                sizes="(max-width: 980px) 90vw, 440px"
                 style={{ objectFit: "cover", objectPosition: "50% 8%" }}
               />
-              <div className="badge">
-                2<small>YRS</small>
-              </div>
+            </div>
+            <div className="badge">
+              <div className="n">2+</div>
+              <small>{lang === "fr" ? "ans d'expérience" : "years of experience"}</small>
             </div>
           </div>
         </div>
-      </div>
-      <div className="hero-foot">
-        <div className="scrollcue">
-          <span className="line" />
-          {t.hero.scroll}
-        </div>
-        <div className="scrollcue">©2026</div>
       </div>
     </header>
   );

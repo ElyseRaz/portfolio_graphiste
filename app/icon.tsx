@@ -10,7 +10,7 @@ export default function Icon() {
         style={{
           width: "100%",
           height: "100%",
-          background: "#000000",
+          background: "#1f4fd6",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -25,7 +25,7 @@ export default function Icon() {
             left: 4,
             width: 8,
             height: 2,
-            background: "#00BFFF",
+            background: "#b9d3ff",
           }}
         />
         {/* Initiale E */}
@@ -49,7 +49,7 @@ export default function Icon() {
             right: 5,
             width: 4,
             height: 4,
-            background: "#00BFFF",
+            background: "#b9d3ff",
             borderRadius: "50%",
           }}
         />

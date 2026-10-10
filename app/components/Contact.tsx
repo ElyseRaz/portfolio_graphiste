@@ -41,35 +41,34 @@ export default function Contact() {
   };
 
   return (
-    <section className="block" id="contact">
+    <section className="block contact" id="contact">
       <div className="shell">
+        <div className="contact-head">
+          <div className="pill reveal">{t.contact.index.replace(/\s*—\s*/, " / ")}</div>
+          <h2 className="contact-lead reveal" style={{ "--d": "80ms" } as CSSProperties}>
+            {t.contact.lead[0]} <span className="accent">{t.contact.lead[1]}</span>
+          </h2>
+          <p className="contact-sub reveal" style={{ "--d": "160ms" } as CSSProperties}>
+            {t.contact.sub}
+          </p>
+        </div>
         <div className="contact-grid">
           <div className="contact-left">
-            <div className="eyebrow reveal">{t.contact.eyebrow}</div>
-            <h2
-              className="contact-lead reveal"
-              style={{ "--d": "100ms", marginTop: "22px" } as CSSProperties}
-            >
-              {t.contact.lead[0]} <span className="accent">{t.contact.lead[1]}</span>
-            </h2>
-            <p
-              className="hero-sub reveal"
-              style={{ "--d": "180ms", maxWidth: "42ch" } as CSSProperties}
-            >
-              {t.contact.sub}
-            </p>
-            <div className="contact-info reveal" style={{ "--d": "260ms" } as CSSProperties}>
+            <div className="contact-info reveal" style={{ "--d": "200ms" } as CSSProperties}>
               <a href={`mailto:${CONTACT_EMAIL}`}>
-                <span className="k">{t.contact.emailK}</span> {CONTACT_EMAIL}
+                <span className="k">{t.contact.emailK}</span>
+                <span className="v">{CONTACT_EMAIL}</span>
               </a>
               <a href={`tel:${CONTACT_PHONE_HREF}`}>
-                <span className="k">{t.contact.phoneK}</span> {CONTACT_PHONE_DISPLAY}
+                <span className="k">{t.contact.phoneK}</span>
+                <span className="v">{CONTACT_PHONE_DISPLAY}</span>
               </a>
               <div className="row">
-                <span className="k">{t.contact.locK}</span> {t.contact.loc}
+                <span className="k">{t.contact.locK}</span>
+                <span className="v">{t.contact.loc}</span>
               </div>
             </div>
-            <div className="socials reveal" style={{ "--d": "320ms" } as CSSProperties}>
+            <div className="socials reveal" style={{ "--d": "260ms" } as CSSProperties}>
               {SOCIALS.map((s) => (
                 <a key={s.label} href={s.href} title={s.label} aria-label={s.label} target="_blank" rel="noopener noreferrer">
                   <SocialLogo label={s.label} />
@@ -77,7 +76,7 @@ export default function Contact() {
               ))}
             </div>
           </div>
-          <div className="contact-right reveal" style={{ "--d": "220ms" } as CSSProperties}>
+          <div className="contact-card reveal" style={{ "--d": "220ms" } as CSSProperties}>
             {state === "done" ? (
               <div className="form-success">
                 <h4>{f.successT}</h4>
@@ -105,12 +104,8 @@ export default function Contact() {
                   <textarea value={vals.message} onChange={set("message")} placeholder={f.msgP} />
                   <div className="msg">{errs.message || ""}</div>
                 </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary submit"
-                  disabled={state === "sending"}
-                >
-                  {state === "sending" ? f.sending : f.send} <span className="arrow">↗</span>
+                <button type="submit" className="btn btn-primary submit" disabled={state === "sending"}>
+                  {state === "sending" ? f.sending : f.send} <span className="arrow">→</span>
                 </button>
               </form>
             )}

@@ -36,9 +36,8 @@ function Login({ onOk }: { onOk: () => void }) {
   return (
     <div className="admin-login">
       <div className="admin-login-card">
-        <div className="eyebrow" style={{ justifyContent: "center" }}>
-          {lang === "fr" ? "Accès restreint" : "Restricted"}
-        </div>
+        <div className="brand">Elysé</div>
+        <div className="eyebrow">{lang === "fr" ? "Accès restreint" : "Restricted"}</div>
         <h2>{lang === "fr" ? "Espace Admin" : "Admin Area"}</h2>
         <p>
           {lang === "fr"
@@ -60,7 +59,6 @@ function Login({ onOk }: { onOk: () => void }) {
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ width: "100%", justifyContent: "center" }}
             disabled={busy}
           >
             {busy
@@ -437,6 +435,28 @@ function MigratePanel() {
   );
 }
 
+function AdminStats() {
+  const { lang } = useLanguage();
+  const store = useStore();
+  const designs = store.getDesigns();
+  const years = new Set(designs.map((d) => d.year).filter(Boolean));
+  const items: [number, string][] = [
+    [designs.length, "Designs"],
+    [store.getCategories().length, lang === "fr" ? "Catégories" : "Categories"],
+    [years.size, lang === "fr" ? "Années couvertes" : "Years covered"],
+  ];
+  return (
+    <div className="admin-stats">
+      {items.map(([n, k]) => (
+        <div className="admin-stat" key={k}>
+          <div className="n">{n}</div>
+          <div className="k">{k}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Admin() {
   const { lang, setLang } = useLanguage();
   const [authed, setAuthed] = useState(false);
@@ -456,15 +476,12 @@ export default function Admin() {
   return (
     <div className="admin">
       <header className="admin-bar">
-        <Link className="brand" href="/">
-          <span className="mark">R</span>
-          <span>
-            {lang === "fr" ? "ESPACE ADMIN" : "ADMIN AREA"}
-            <span className="mono admin-brand-sub">
-              RAZAFINDRAVONJY · Portfolio
-            </span>
-          </span>
-        </Link>
+        <div className="brand-wrap">
+          <Link className="brand" href="/">
+            Elysé
+          </Link>
+          <span className="admin-tag">{lang === "fr" ? "Espace admin" : "Admin area"}</span>
+        </div>
         <div className="admin-bar-right">
           <div className="lang-toggle">
             <button
@@ -487,7 +504,7 @@ export default function Admin() {
           </Link>
           <button
             type="button"
-            className="nav-cta"
+            className="nav-cta outline"
             onClick={async () => {
               await fetch("/api/auth/logout", { method: "POST" });
               setAuthed(false);
@@ -501,13 +518,16 @@ export default function Admin() {
       <div className="admin-body shell">
         <div className="admin-intro">
           <div className="eyebrow">{lang === "fr" ? "Tableau de bord" : "Dashboard"}</div>
-          <h1>{lang === "fr" ? "Gérez vos designs" : "Manage your designs"}</h1>
+          <h1>
+            {lang === "fr" ? "Gérez vos" : "Manage your"} <span className="accent">designs</span>
+          </h1>
           <p>
             {lang === "fr"
               ? "Créez des catégories, ajoutez vos réalisations avec une image, et tout apparaît instantanément sur votre portfolio."
               : "Create categories, add your work with an image, and everything appears instantly on your portfolio."}
           </p>
         </div>
+        <AdminStats />
         <MigratePanel />
         <div className="admin-grid">
           <CategoryPanel />

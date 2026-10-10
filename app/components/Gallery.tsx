@@ -107,7 +107,7 @@ function Lightbox({
   );
 }
 
-const PAGE = 9;
+const PAGE = 8;
 
 export default function Gallery() {
   const { t, lang } = useLanguage();
@@ -179,16 +179,13 @@ export default function Gallery() {
       <div className="shell">
         <div className="section-head">
           <div>
-            <div className="eyebrow reveal">{t.work.eyebrow}</div>
-            <h2
-              className="section-title reveal"
-              style={{ "--d": "100ms", marginTop: "22px" } as CSSProperties}
-            >
+            <div className="eyebrow reveal">{t.work.index.replace(/\s*—\s*/, " / ")}</div>
+            <h2 className="section-title reveal" style={{ "--d": "80ms" } as CSSProperties}>
               {t.work.title[0]} <span className="accent">{t.work.title[1]}</span>
             </h2>
           </div>
-          <div className="section-index reveal" style={{ "--d": "160ms" } as CSSProperties}>
-            {t.work.index}
+          <div className="section-index reveal" style={{ "--d": "140ms" } as CSSProperties}>
+            {t.work.hint}
           </div>
         </div>
 
@@ -243,14 +240,21 @@ export default function Gallery() {
                     ) : (
                       <div className="gcard-noimg">{lang === "fr" ? "Sans image" : "No image"}</div>
                     )}
-                    <span className="gcard-view">{lang === "fr" ? "Voir" : "View"} ↗</span>
+                    <span className="gcard-chip">{store.categoryName(d.categoryId)}</span>
                   </div>
                   <div className="gcard-body">
+                    <div className="gcard-meta">
+                      <span>[ {String(i + 1).padStart(2, "0")} ]</span>
+                      <span>{d.year}</span>
+                    </div>
                     <h3>{d.title}</h3>
-                    <span className="gcard-cat">
-                      {store.categoryName(d.categoryId)}
-                      {d.year ? " · " + d.year : ""}
-                    </span>
+                    {d.desc && <p className="gcard-desc">{d.desc}</p>}
+                    <div className="gcard-foot">
+                      <div>
+                        <span className="c1">{store.categoryName(d.categoryId)}</span>
+                        <span className="c2">{t.work.viewAll} →</span>
+                      </div>
+                    </div>
                   </div>
                 </button>
               ))}
