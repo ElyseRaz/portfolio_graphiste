@@ -11,6 +11,7 @@ const About = dynamic(() => import("./About"));
 const Gallery = dynamic(() => import("./Gallery"));
 const Services = dynamic(() => import("./Services"));
 const Skills = dynamic(() => import("./Skills"));
+const Award = dynamic(() => import("./Award"));
 const Contact = dynamic(() => import("./Contact"));
 const Footer = dynamic(() => import("./Footer"));
 
@@ -37,6 +38,7 @@ export default function Portfolio() {
         <Gallery />
         <Services />
         <Skills />
+        <Award />
         <Contact />
         <Footer onJump={onJump} />
       </main>

@@ -3,7 +3,7 @@
 export type Lang = "fr" | "en";
 
 export interface Content {
-  nav: { about: string; skills: string; work: string; services: string; contact: string; cta: string };
+  nav: { about: string; skills: string; award: string; work: string; services: string; contact: string; cta: string };
   hero: {
     tags: string[]; name1: string; name2: string; sub: string;
     primary: string; ghost: string; scroll: string; marquee: string[];
@@ -17,6 +17,12 @@ export interface Content {
   skills: {
     eyebrow: string; index: string; title: [string, string]; sub: string;
     disciplinesLabel: string; disciplines: string[];
+  };
+  award: {
+    eyebrow: string; index: string; title: [string, string]; sub: string;
+    rank: string; contest: string; event: string; organizer: string; date: string; place: string;
+    contestV: string; eventV: string; organizerV: string; dateV: string; placeV: string;
+    view: string; close: string; alt: string;
   };
   work: { eyebrow: string; index: string; title: [string, string]; hint: string; viewAll: string };
   services: { eyebrow: string; index: string; title: [string, string] };
@@ -36,7 +42,7 @@ export interface Content {
 
 export const CONTENT: Record<Lang, Content> = {
   fr: {
-    nav: { about: "À propos", skills: "Compétences", work: "Projets", services: "Services", contact: "Contact", cta: "Travaillons ensemble" },
+    nav: { about: "À propos", skills: "Compétences", award: "Distinction", work: "Projets", services: "Services", contact: "Contact", cta: "Travaillons ensemble" },
     hero: {
       tags: ["Designer Graphique", "Monteur Vidéo", "Fianarantsoa · MG"],
       name1: "RAZAFINDRAVONJY SOLOFONIRINA",
@@ -70,6 +76,21 @@ export const CONTENT: Record<Lang, Content> = {
       disciplinesLabel: "Disciplines",
       disciplines: ["Direction artistique", "Mise en page", "Typographie", "Branding", "Retouche photo", "Habillage réseaux sociaux", "Montage & étalonnage", "Sous-titrage"],
     },
+    award: {
+      eyebrow: "Distinction",
+      index: "05 — Distinction",
+      title: ["Lauréat,", "2ᵉ place"],
+      sub: "Une reconnaissance officielle de mon travail en design créatif.",
+      rank: "2ᵉ place",
+      contest: "Concours", contestV: "Creative Design Challenge",
+      event: "Événement", eventV: "Salon Numérique Ivo.egnana Tech Meeting",
+      organizer: "Organisateur", organizerV: "Youth Computing",
+      date: "Date", dateV: "13 – 16 mai 2026",
+      place: "Lieu", placeV: "Fianarantsoa",
+      view: "Voir le certificat",
+      close: "Fermer",
+      alt: "Certificat de Lauréat — 2ᵉ place au Creative Design Challenge",
+    },
     work: {
       eyebrow: "Sélection",
       index: "02 — Projets",
@@ -84,7 +105,7 @@ export const CONTENT: Record<Lang, Content> = {
     },
     contact: {
       eyebrow: "Contact",
-      index: "05 — Contact",
+      index: "06 — Contact",
       lead: ["Créons", "ensemble"],
       sub: "Un projet en tête ? Parlons-en. Je réponds généralement sous 24 h.",
       emailK: "Email", phoneK: "Téléphone", locK: "Lieu", loc: "Fianarantsoa, Madagascar",
@@ -107,7 +128,7 @@ export const CONTENT: Record<Lang, Content> = {
   },
 
   en: {
-    nav: { about: "About", skills: "Skills", work: "Work", services: "Services", contact: "Contact", cta: "Let's work together" },
+    nav: { about: "About", skills: "Skills", award: "Award", work: "Work", services: "Services", contact: "Contact", cta: "Let's work together" },
     hero: {
       tags: ["Graphic Designer", "Video Editor", "Fianarantsoa · MG"],
       name1: "SOLOFONIRINA",
@@ -141,6 +162,21 @@ export const CONTENT: Record<Lang, Content> = {
       disciplinesLabel: "Disciplines",
       disciplines: ["Art direction", "Layout", "Typography", "Branding", "Photo retouching", "Social media design", "Editing & color grading", "Subtitling"],
     },
+    award: {
+      eyebrow: "Award",
+      index: "05 — Award",
+      title: ["Laureate,", "2nd place"],
+      sub: "An official recognition of my work in creative design.",
+      rank: "2nd place",
+      contest: "Contest", contestV: "Creative Design Challenge",
+      event: "Event", eventV: "Salon Numérique Ivo.egnana Tech Meeting",
+      organizer: "Organizer", organizerV: "Youth Computing",
+      date: "Date", dateV: "May 13 – 16, 2026",
+      place: "Location", placeV: "Fianarantsoa",
+      view: "View certificate",
+      close: "Close",
+      alt: "Laureate certificate — 2nd place at the Creative Design Challenge",
+    },
     work: {
       eyebrow: "Selected",
       index: "02 — Work",
@@ -155,7 +191,7 @@ export const CONTENT: Record<Lang, Content> = {
     },
     contact: {
       eyebrow: "Contact",
-      index: "05 — Contact",
+      index: "06 — Contact",
       lead: ["Let's create", "together"],
       sub: "Got a project in mind? Let's talk. I usually reply within 24 hours.",
       emailK: "Email", phoneK: "Phone", locK: "Location", loc: "Fianarantsoa, Madagascar",
@@ -205,7 +241,7 @@ export const SERVICES: Service[] = [
 export interface Social { label: string; short: string; href: string }
 
 export const SOCIALS: Social[] = [
-  { label: "LinkedIn",  short: "In", href: "https://linkedin.com/in/elyse-razafindravonjy-9355b32b5/" },
+  { label: "LinkedIn",  short: "In", href: "https://www.linkedin.com/in/razafindravonjy-solofonirina-elys%C3%A9-9355b32b5" },
   { label: "GitHub",    short: "Gh", href: "https://github.com/ElyseRaz" },
   { label: "WhatsApp",  short: "WA", href: "https://wa.me/261346571348" },
 ];

@@ -51,6 +51,7 @@ export default function Navbar({ onJump }: { onJump: (id: string) => void }) {
     ["work", t.nav.work],
     ["services", t.nav.services],
     ["skills", t.nav.skills],
+    ["award", t.nav.award],
     ["contact", t.nav.contact],
   ];
 

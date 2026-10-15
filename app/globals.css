@@ -670,3 +670,23 @@ section { position: relative; }
 .skill-bar { height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .skill-bar span { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
 #skills .chips { margin-top: 36px; }
+
+/* Award section */
+.award-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
+.award-cert { position: relative; display: block; border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; background: var(--bg); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08); }
+.award-cert img { display: block; width: 100%; height: auto; transition: transform 0.5s var(--ease); }
+.award-cert:hover img { transform: scale(1.02); }
+.award-view { position: absolute; right: 14px; bottom: 14px; padding: 8px 14px; border-radius: var(--radius-full); background: var(--ink-strong); color: var(--bg); font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.award-rank { display: flex; align-items: baseline; gap: 14px; margin-bottom: 28px; }
+.award-rank b { font-size: clamp(64px, 9vw, 112px); line-height: 1; color: var(--accent); }
+.award-rank sup { font-size: 0.4em; }
+.award-rank span { font-family: var(--font-label); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.award-info dl > div { padding: 14px 0; border-top: 1px solid var(--line); }
+.award-info dt { font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.award-info dd { font-size: 16px; color: var(--ink-strong); }
+@media (max-width: 980px) { .award-grid { grid-template-columns: 1fr; gap: 28px; } }
+.award-cert { padding: 0; cursor: zoom-in; text-align: left; width: 100%; }
+.award-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 56px 20px 20px; background: rgba(8, 10, 16, 0.88); cursor: zoom-out; }
+.award-modal img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 6px; cursor: default; }
+.award-close { position: absolute; top: 12px; right: 16px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); color: #fff; font-size: 30px; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.award-close:hover { background: rgba(255, 255, 255, 0.28); }
