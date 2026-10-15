@@ -47,9 +47,10 @@ export default function Navbar({ onJump }: { onJump: (id: string) => void }) {
 
   const links: [string, string][] = [
     ["top", lang === "fr" ? "Accueil" : "Home"],
+    ["about", t.nav.about],
     ["work", t.nav.work],
     ["services", t.nav.services],
-    ["about", t.nav.about],
+    ["skills", t.nav.skills],
     ["contact", t.nav.contact],
   ];
 

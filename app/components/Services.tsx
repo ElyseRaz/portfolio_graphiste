@@ -2,9 +2,8 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useLanguage } from "../lib/i18n";
-import { SERVICES, TOOLS } from "../lib/content";
+import { SERVICES } from "../lib/content";
 import SectionHead from "./SectionHead";
-import ToolLogo from "./ToolLogo";
 
 const svg = (children: ReactNode) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -27,7 +26,7 @@ export default function Services() {
         <SectionHead
           index={t.services.index}
           titleParts={t.services.title}
-          sub={t.skills.sub}
+          
         />
         <div className="svc-grid">
           {SERVICES.map((s, i) => {
@@ -43,17 +42,6 @@ export default function Services() {
               </div>
             );
           })}
-        </div>
-        <div className="toolbox reveal">
-          <span className="toolbox-label">{t.skills.eyebrow} :</span>
-          <div className="toolbox-list">
-            {TOOLS.map((tool) => (
-              <span className="tool-pill" key={tool.name} title={lang === "fr" ? tool.roleFr : tool.roleEn}>
-                <span className="ico"><ToolLogo name={tool.name} abbr={tool.abbr} /></span>
-                {tool.name}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
     </section>

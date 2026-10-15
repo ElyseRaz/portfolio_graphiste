@@ -10,6 +10,7 @@ const Marquee = dynamic(() => import("./Marquee"));
 const About = dynamic(() => import("./About"));
 const Gallery = dynamic(() => import("./Gallery"));
 const Services = dynamic(() => import("./Services"));
+const Skills = dynamic(() => import("./Skills"));
 const Contact = dynamic(() => import("./Contact"));
 const Footer = dynamic(() => import("./Footer"));
 
@@ -32,9 +33,10 @@ export default function Portfolio() {
       <main>
         <Hero onJump={onJump} />
         <Marquee />
+        <About />
         <Gallery />
         <Services />
-        <About />
+        <Skills />
         <Contact />
         <Footer onJump={onJump} />
       </main>

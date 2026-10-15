@@ -64,7 +64,7 @@ export const CONTENT: Record<Lang, Content> = {
     },
     skills: {
       eyebrow: "Boîte à outils",
-      index: "02 — Compétences",
+      index: "04 — Compétences",
       title: ["Les outils de mon", "métier"],
       sub: "Une suite créative complète, du print au motion design.",
       disciplinesLabel: "Disciplines",
@@ -72,14 +72,14 @@ export const CONTENT: Record<Lang, Content> = {
     },
     work: {
       eyebrow: "Sélection",
-      index: "03 — Projets",
+      index: "02 — Projets",
       title: ["Travaux", "récents"],
       hint: "Cliquez sur un projet pour en savoir plus",
       viewAll: "Voir le projet",
     },
     services: {
       eyebrow: "Ce que je propose",
-      index: "04 — Services",
+      index: "03 — Services",
       title: ["Mes", "services"],
     },
     contact: {
@@ -135,7 +135,7 @@ export const CONTENT: Record<Lang, Content> = {
     },
     skills: {
       eyebrow: "Toolkit",
-      index: "02 — Skills",
+      index: "04 — Skills",
       title: ["The tools of my", "craft"],
       sub: "A full creative suite, from print to motion design.",
       disciplinesLabel: "Disciplines",
@@ -143,14 +143,14 @@ export const CONTENT: Record<Lang, Content> = {
     },
     work: {
       eyebrow: "Selected",
-      index: "03 — Work",
+      index: "02 — Work",
       title: ["Recent", "work"],
       hint: "Click a project to learn more",
       viewAll: "View project",
     },
     services: {
       eyebrow: "What I offer",
-      index: "04 — Services",
+      index: "03 — Services",
       title: ["My", "services"],
     },
     contact: {
